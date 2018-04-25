@@ -1,0 +1,17 @@
+{
+  "name": "canvas-type",
+  "version": "1.0.0",
+  "description": "A simple typewriter simulator in javascript",
+  "main": "index.htm",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "typewriter"
+  ],
+  "author": "folkin",
+  "license": "MIT",
+  "devDependencies": {
+    "node-static": "^0.7.10"
+  }
+}
