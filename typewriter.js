@@ -2,14 +2,14 @@
   
   var $container;
   var $canvas;
+  var $tape;
+  var $print;
   var ctx;
-  var keys = [];
-  var mods = [];
   var sz = { w: 670, h: 867 }
   var margin = { top: 20, right: 10, bottom: 20, left: 10 };
-  var tab = charWidth * 4;
   var charWidth = 10;
   var lineHeight = 20;
+  var tab = charWidth * 4;
   var pos = { 
     x: margin.left, 
     y: margin.top,
@@ -24,72 +24,106 @@
   function initialize() {
     $container = document.getElementById('container');
     $canvas = document.getElementById('page');
+    $tape = document.getElementById('tape');
+    $print = document.getElementById('print');
     ctx = $canvas.getContext('2d');
-    ctx.font = '12px Mechanical';
+    ctx.font = '14px Mechanical';
+    
+    renderTape();
+    moveCanvas();
+    
     document.addEventListener('keydown', onKeyDown);
     document.addEventListener('keyup', onKeyUp);
-    moveCanvas();
+    document.addEventListener('keypress', onKeyPress);
+    window.addEventListener('beforeprint', function(e) { $print.src = $canvas.toDataURL(); })
+  }
+
+  function renderTape() {
+    var ctx = $tape.getContext('2d');
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+    ctx.fillRect(0, 0, 50, 20);
+    ctx.fillStyle = 'rgba(0, 0, 160, 0.25)';
+    ctx.fillRect(25 - (charWidth / 2), 2, charWidth, lineHeight - 4);
   }
 
   function onKeyDown(evt) {
-    if (evt.repeat)
-      return;
-    if (evt.key.length > 1)
-      mods.push(evt.key);
-    else
-      keys.push(evt.key);
-    
-    console.log(' v: ' + evt.key + '  keys:' + JSON.stringify(keys) + '  mods:' + JSON.stringify(mods));
+    if (evt.key === 'Tab' ) {
+      evt.preventDefault();
+      evt.stopPropagation();
+    }
   }
 
   function onKeyUp(evt) {
-    var idx = keys.indexOf(evt.key);
-    if (idx >= 0) {
-      keys.splice(idx, 1);
-      renderCharacter(evt.key);
-      console.log(' ^: ' + evt.key + '  keys:' + JSON.stringify(keys) + '  mods:' + JSON.stringify(mods));
-      moveCanvas();
+    if (evt.repeat)
       return;
+
+    var handled = false;
+    switch (evt.key) {
+      case 'Enter':
+        pos.cr();
+        handled = true;
+        break;
+      case 'Tab':
+        console.log('keyup: tab');
+        pos.right(tab);
+        handled = true;
+        break;
+      case 'Backspace':
+        pos.left(charWidth);
+        handled = true;
+        break;
+      case 'ArrowLeft':
+        pos.left(evt.shiftKey ? charWidth * 4 : charWidth);
+        handled = true;
+        break;
+      case 'ArrowRight':
+        pos.right(evt.shiftKey ? charWidth * 4 : charWidth);
+        handled = true;
+        break;
+      case 'ArrowUp':
+        pos.up(evt.shiftKey ? lineHeight * 1 : lineHeight);
+        handled = true;
+        break;
+      case 'ArrowDown':
+        pos.down(evt.shiftKey ? lineHeight * 1 : lineHeight);
+        handled = true;
+        break;
     }
 
-    idx = mods.indexOf(evt.key);
-    if (idx >= 0) {
-      mods.splice(idx, 1);
-      switch (evt.key) {
-        case 'Enter':
-          pos.cr();
-          break;
-        case 'Backspace':
-          pos.left(charWidth)
-          break;
-        case 'ArrowLeft':
-          pos.left(evt.shiftKey ? charWidth * 4 : charWidth);
-          break;
-        case 'ArrowRight':
-          pos.right(evt.shiftKey ? charWidth * 4 : charWidth);
-          break;
-        case 'ArrowUp':
-          pos.up(evt.shiftKey ? lineHeight * 1 : lineHeight);
-          break;
-        case 'ArrowDown':
-          pos.down(evt.shiftKey ? lineHeight * 1 : lineHeight);
-          break;
-      }
+    if (handled) {
+      evt.preventDefault();
+      evt.stopPropagation();
       moveCanvas();
-      console.log(' ^: ' + evt.key + '  keys:' + JSON.stringify(keys) + '  mods:' + JSON.stringify(mods));
-      return;
+    }
+  }
+
+  function onKeyPress(evt) {
+    if (evt.key.length == 1) {
+      renderCharacter(evt.key);
+      evt.preventDefault();
+      evt.stopPropagation();
+      moveCanvas();
     }
   }
 
   function renderCharacter(val) {
     ctx.fillStyle = 'Black';
     ctx.fillText (val, pos.x, pos.y);
-    pos.x += 10;
+    pos.right(charWidth);
   }
 
   function moveCanvas() {
-    $canvas.style.left = '' + ($container.offsetWidth / 2) - pos.x + 'px';    
-    $canvas.style.top = '' + 150 - pos.y + 'px';
+    var totalWidth = $container.offsetWidth;
+    var loc = {
+      left: '' + (totalWidth / 2) - pos.x + 'px',
+      top: '' + 150 - pos.y + 'px'
+    };
+    $canvas.style.left = loc.left;
+    $canvas.style.top = loc.top;
+    console.log('[x:' + pos.x + ', y:' + pos.y + ']  --  [l:' + loc.left + ', t:' + loc.top + ']');
+
+    $tape.style.left = '' + (totalWidth / 2) - 20 + 'px';
+    $tape.style.top = '135px';
   }
 
   document.addEventListener('DOMContentLoaded', function(evt) { initialize(); });

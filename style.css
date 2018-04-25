@@ -6,6 +6,12 @@
   font-style: normal;
 }
 
+html {
+  font-family: 'Mechanical';
+  font-size: 14px;
+  overflow: hidden;;
+  
+}
 
 #container {
   top: 10px;
@@ -22,5 +28,32 @@
   width: 670px;
   height: 867px;
   border: 1px solid black;
-  position: relative;
+  position: absolute;
+  z-index: 1000;
+}
+
+#tape {
+  width: 50px;
+  height: 20px;
+  position: absolute;
+  z-index: 2000;
+}
+
+
+#print {
+  visibility: hidden;  
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 670px;
+  height: 867px;
+}
+
+@media print {
+  #container {
+    visibility: hidden;
+  }
+  #print {
+    visibility: visible;
+  }
 }
