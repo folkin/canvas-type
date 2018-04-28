@@ -129,6 +129,8 @@
     this.$main = null;
     this.$paper = null;
     this.$typewriter = null;
+    this.$roller = null;
+    this.$bailbar = null;
     this.$print;
     this.ctx;
     this.dimensions = { };
@@ -140,6 +142,8 @@
     this.$main = document.getElementsByTagName("main")[0];
     this.$paper = document.getElementById('paper');
     this.$typewriter = document.getElementById('typewriter');
+    this.$roller = document.getElementById('roller');
+    this.$bailbar = document.getElementById('bail-bar');
     this.$print = document.getElementById('print');
     
     document.addEventListener('keydown', this.onKeyDown.bind(this));
@@ -153,27 +157,17 @@
     this.onResize();
   }
 
-  Typewriter.prototype.renderTypewriter = function() {
+  Typewriter.prototype.layoutTypewriter = function() {
 
     var sz = { width: this.dimensions.totalWidth, height: this.$typewriter.height };
     var w = this.page.dimensions.width + 100;
     var x = (sz.width - w) / 2;
 
-    var ctx = this.$typewriter.getContext('2d');
-    ctx.clearRect(0, 0, sz.width, sz.height);
-    ctx.fillStyle = '#333333';
-    ctx.fillRect(0, 150, x, 50);
-    ctx.fillRect(sz.width - x - 3, 150, x, 50);
-    ctx.fillStyle = '#009999';
-    ctx.fillRect(x, 150, w, 50);
-    ctx.fillStyle = '#999999';
-    ctx.fillRect(x, 10, w, 4);
-    ctx.fillStyle = '#050505';
-    ctx.fillRect(x + 40, 2, 50, 20);
-    ctx.fillRect(x + w - 90, 2, 50, 20);
-
     this.$typewriter.style.left = '0';
     this.$typewriter.style.top = '' + (this.dimensions.totalHeight - sz.height) + 'px';
+
+    this.$roller.style.top = '' + (this.dimensions.totalHeight - 250) + 'px';
+    this.$bailbar.style.top = '' + (this.dimensions.totalHeight - 250) + 'px';
   };
 
   Typewriter.prototype.onResize = function() {
@@ -181,11 +175,23 @@
       totalWidth: window.innerWidth,
       totalHeight: window.innerHeight,
       pageWidth: this.page.dimensions.width,
+      roller: { aspect: 3589.0682 / 508.94603 },
+      bailbar: { aspect: 3194.7777 / 347.09122 },
     };
 
     var sz = { width: this.dimensions.totalWidth, height: 200 };
-    this.dimensions.x = (this.dimensions.totalWidth / 2);
-    this.dimensions.y = (this.dimensions.totalHeight - sz.height + 50);
+    this.dimensions.x = (this.dimensions.totalWidth / 2) - 15;
+    this.dimensions.y = (this.dimensions.totalHeight - sz.height);
+
+    this.dimensions.roller.width = (this.dimensions.pageWidth + 140);
+    this.dimensions.roller.height = this.dimensions.roller.width / this.dimensions.roller.aspect;
+    this.dimensions.bailbar.width = (this.dimensions.pageWidth + 100);
+    this.dimensions.bailbar.height = this.dimensions.bailbar.width / this.dimensions.bailbar.aspect;
+
+    this.$typewriter.width = sz.width;
+    this.$typewriter.height = sz.height;
+    this.$typewriter.style.width = '' + sz.width + 'px';
+    this.$typewriter.style.height = '' + sz.height + 'px';
 
     this.$typewriter.width = sz.width;
     this.$typewriter.height = sz.height;
@@ -196,11 +202,21 @@
     this.$paper.height = this.page.dimensions.height;
     this.$paper.style.width = '' + this.page.dimensions.width + 'px';
     this.$paper.style.height = '' + this.page.dimensions.height + 'px';
+    
+    this.$roller.width = this.dimensions.roller.width;
+    this.$roller.style.width = '' + this.dimensions.roller.width + 'px';
+    this.$roller.height = this.dimensions.roller.height;
+    this.$roller.style.height = '' + this.dimensions.roller.height + 'px';
+
+    this.$bailbar.width = this.dimensions.bailbar.width;
+    this.$bailbar.style.width = '' + this.dimensions.bailbar.width + 'px';
+    this.$bailbar.height = this.dimensions.bailbar.height;
+    this.$bailbar.style.height = '' + this.dimensions.bailbar.height + 'px';
 
     this.ctx = this.$paper.getContext('2d');
     this.ctx.font = '14px Mechanical';
 
-    this.renderTypewriter();
+    this.layoutTypewriter();
     this.moveCanvas();
   };
 
@@ -292,12 +308,18 @@
     if (a) {
       animate(this.$paper, 'left', left, 50);
       animate(this.$paper, 'top', top, 50);
+      animate(this.$roller, 'left', left - 60, 50);
+      animate(this.$bailbar, 'left', left - 50, 50);
     }
     else
     {
       this.$paper.style.left = left + 'px';
       this.$paper.style.top = top + 'px';
+      this.$roller.style.left = (left - 60) + 'px';
+      this.$bailbar.style.left = (left - 50) + 'px';
       this.$paper._vars = { left: left, top: top };
+      this.$roller._vars = { left: left - 60 };
+      this.$bailbar._vars = { left: left - 50 };
     }
   }
 

@@ -25,17 +25,40 @@ main {
   position: absolute;
 }
 
+#roller {
+  z-index: 100;
+  position:absolute;
+  bottom: 162px;
+}
+
 #paper {
+  z-index: 200;
   background: #fcfcfc;
   border: 1px solid black;
-  position: absolute;
-  z-index: 1000; 
+  position: absolute; 
   box-shadow: 2px 3px #222;
 }
 
-#typewriter {
+#clip {
+  z-index: 300;
+  background: #333;
   position: absolute;
-  z-index: 2000;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 130;
+}
+
+#typewriter {
+  z-index: 400;
+  position:absolute;
+  bottom: 0;
+}
+
+#bail-bar {
+  z-index: 500;
+  position: absolute;
+  bottom: 162px;
 }
 
 
