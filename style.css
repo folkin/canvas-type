@@ -63,12 +63,12 @@ main {
 
 
 #print {
-  visibility: hidden;  
+  visibility: hidden;
   position: absolute;
   top: 0;
   left: 0;
-  width: 670px;
-  height: 867px;
+  width: 1100px;
+  height: 1423px;
 }
 
 @media print {

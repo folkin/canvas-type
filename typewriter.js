@@ -111,7 +111,7 @@
     this.key = key || '';
   };
   Action.parse = function(obj) {
-    return new Action(obj.x, obj.y, obj.k);    
+    return new Action(obj.x, obj.y, obj.k);
   };
   Action.prototype.toJson = function() {
     return { x: this.x, y: this.y, k: this.key }
@@ -266,19 +266,19 @@
         handled = true;
         break;
       case 'ArrowLeft':
-        this.page.move.right(evt.shiftKey ? charWidth * 4 : evt.ctrlKey ? 1 : charWidth);
-        handled = true;
-        break;
-      case 'ArrowRight':
         this.page.move.left(evt.shiftKey ? charWidth * 4 : evt.ctrlKey ? 1 : charWidth);
         handled = true;
         break;
+      case 'ArrowRight':
+        this.page.move.right(evt.shiftKey ? charWidth * 4 : evt.ctrlKey ? 1 : charWidth);
+        handled = true;
+        break;
       case 'ArrowUp':
-        this.page.move.down(evt.shiftKey ? lineHeight * 3 : evt.ctrlKey ? 1 : lineHeight);
+        this.page.move.up(evt.shiftKey ? lineHeight * 3 : evt.ctrlKey ? 1 : lineHeight);
         handled = true;
         break;
       case 'ArrowDown':
-        this.page.move.up(evt.shiftKey ? lineHeight * 3 : evt.ctrlKey ? 1 : lineHeight);
+        this.page.move.down(evt.shiftKey ? lineHeight * 3 : evt.ctrlKey ? 1 : lineHeight);
         handled = true;
         break;
     }
